@@ -332,7 +332,7 @@
   <button class="reset-btn" onclick="resetAll()">↺ Reset alles</button>
 </div>
 
-<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2/dist/umd/supabase.min.js" onload="window.supabaseLib=window.supabase"></script>
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2/dist/umd/supabase.min.js"></script>
 <script>
 // ═══════════════════════════════════════════
 // DATA
@@ -492,7 +492,7 @@ const SUPABASE_KEY = 'sb_publishable_i71uqJLJVP2SQ-AXrKldDw_XyDAMgE3';
 let supabase = null;
 
 async function initSupabase() {
-  const { createClient } = window.supabaseLib;
+  const { createClient } = window.supabase;
   supabase = createClient(SUPABASE_URL, SUPABASE_KEY);
   await loadFromSupabase();
   subscribeRealtime();
@@ -839,7 +839,23 @@ renderContacts();
 renderSpecs();
 renderVault();
 updateTabCounts();
-initSupabase();
+
+// Supabase laden na DOM klaar
+document.addEventListener('DOMContentLoaded', () => {
+  if (window.supabase && window.supabase.createClient) {
+    initSupabase();
+  } else {
+    console.error('Supabase library niet geladen');
+  }
+});
+// Fallback als DOMContentLoaded al geweest is
+if (document.readyState === 'complete' || document.readyState === 'interactive') {
+  setTimeout(() => {
+    if (window.supabase && window.supabase.createClient && !supabase) {
+      initSupabase();
+    }
+  }, 100);
+}
 </script>
 </body>
 </html>
