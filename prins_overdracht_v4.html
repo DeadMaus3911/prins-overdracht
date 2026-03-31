@@ -1,0 +1,845 @@
+<!DOCTYPE html>
+<html lang="nl">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Overdracht Maurice — Prins Petfoods</title>
+<style>
+  @font-face { font-family:'Gotham'; font-weight:400; src:local('Gotham Book'),local('Gotham-Book'); }
+  @font-face { font-family:'Gotham'; font-weight:700; src:local('Gotham Bold'),local('Gotham-Bold'); }
+  @font-face { font-family:'Gotham'; font-weight:800; src:local('Gotham Black'),local('Gotham-Black'),local('Gotham Bold'); }
+  @font-face { font-family:'Gotham'; font-weight:900; src:local('Gotham Ultra'),local('Gotham-Ultra'),local('Gotham Black'); }
+
+  *,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
+  :root{
+    --dk:#0d5a4d; --md:#1a7a6a; --lt:#a2c4ba; --mint:#e8f5f2;
+    --red:#e83f4b; --leaf:#8abd24;
+    --bg:#f5f9f8; --white:#fff;
+    --g100:#dce8e5; --g400:#7a9e98; --g600:#4a6e69;
+    --txt:#1a2e2b; --muted:#5a7a76; --hint:#8aada9;
+    --bdr:rgba(13,90,77,.12); --bdrm:rgba(13,90,77,.22);
+    --sh:0 2px 8px rgba(13,90,77,.1); --shm:0 4px 20px rgba(13,90,77,.15);
+    --r:12px; --rl:18px;
+  }
+  html{scroll-behavior:smooth}
+  body{font-family:'Gotham','Arial',sans-serif;background:var(--bg);color:var(--txt);min-height:100vh;padding-bottom:100px}
+
+  /* ── HEADER ── */
+  .site-header{background:var(--dk);position:sticky;top:0;z-index:100;box-shadow:0 4px 24px rgba(0,0,0,.2)}
+  .hdr{max-width:860px;margin:0 auto;padding:18px 28px;display:flex;align-items:center;justify-content:space-between;gap:20px}
+  .hdr-brand{display:flex;align-items:center;gap:14px}
+  .logo-badge{width:42px;height:42px;border-radius:10px;background:#fff;display:flex;align-items:center;justify-content:center;font-size:22px;flex-shrink:0}
+  .hdr-titles h1{font-size:17px;font-weight:800;color:#fff;letter-spacing:-.3px;line-height:1.1}
+  .hdr-titles p{font-size:11px;color:var(--lt);font-weight:600;margin-top:2px}
+  .hdr-xp{text-align:right;min-width:140px}
+  .xp-label{font-size:10px;color:var(--lt);font-weight:700;text-transform:uppercase;letter-spacing:.06em;margin-bottom:5px}
+  .xp-row{display:flex;align-items:center;gap:10px;justify-content:flex-end}
+  .xp-pct{font-size:22px;font-weight:900;color:#fff;line-height:1}
+  .xp-track{width:90px;height:8px;background:rgba(255,255,255,.2);border-radius:4px;overflow:hidden}
+  .xp-fill{height:100%;background:linear-gradient(90deg,var(--leaf),#aade38);border-radius:4px;transition:width .6s cubic-bezier(.4,0,.2,1)}
+  .lv-badge{display:inline-flex;align-items:center;gap:5px;background:var(--leaf);color:#fff;font-size:11px;font-weight:800;padding:3px 10px 3px 7px;border-radius:20px;margin-top:5px}
+
+  /* ── PAGE ── */
+  .page{max-width:860px;margin:0 auto;padding:28px 28px 0}
+
+  /* ── NAV TABS (top-level) ── */
+  .nav-tabs{display:flex;gap:6px;margin-bottom:24px;border-bottom:2px solid var(--g100);padding-bottom:0}
+  .nav-tab{padding:10px 18px;font-size:13px;font-weight:700;color:var(--muted);background:transparent;border:none;border-bottom:3px solid transparent;margin-bottom:-2px;cursor:pointer;font-family:'Gotham','Arial',sans-serif;transition:all .18s;display:flex;align-items:center;gap:7px;white-space:nowrap}
+  .nav-tab:hover{color:var(--dk)}
+  .nav-tab.active{color:var(--dk);border-bottom-color:var(--dk)}
+  .nav-tab .nt-icon{font-size:16px}
+
+  /* ── PANELS ── */
+  .panel{display:none}.panel.active{display:block}
+
+  /* ── FAREWELL ── */
+  .farewell{background:#fff;border:1.5px solid var(--bdr);border-left:5px solid var(--dk);border-radius:var(--rl);padding:20px 24px;margin-bottom:24px;box-shadow:var(--sh);position:relative;overflow:hidden}
+  .farewell::before{content:'';position:absolute;top:0;right:0;width:100px;height:100px;background:var(--mint);border-radius:0 0 0 100px}
+  .fn-lbl{font-size:10px;font-weight:800;letter-spacing:.1em;text-transform:uppercase;color:var(--dk);margin-bottom:7px;position:relative}
+  .farewell p{font-size:13px;color:var(--muted);line-height:1.7;position:relative;max-width:540px}
+  .farewell-icon{position:absolute;top:14px;right:18px;font-size:26px;z-index:1}
+
+  /* ── USER BAR ── */
+  .user-card{background:#fff;border:1.5px solid var(--bdr);border-radius:var(--rl);padding:14px 18px;margin-bottom:22px;display:flex;align-items:center;gap:12px;box-shadow:var(--sh)}
+  .avatar{width:40px;height:40px;border-radius:50%;background:var(--mint);border:2.5px solid var(--dk);color:var(--dk);font-size:13px;font-weight:800;display:flex;align-items:center;justify-content:center;flex-shrink:0;transition:all .2s}
+  .avatar.active{background:var(--dk);color:#fff}
+  .user-card label{font-size:11px;color:var(--hint);font-weight:700;white-space:nowrap;text-transform:uppercase;letter-spacing:.05em}
+  .user-card input{flex:1;border:none;outline:none;font-family:'Gotham','Arial',sans-serif;font-size:14px;font-weight:700;color:var(--txt);background:transparent;max-width:260px}
+  .user-card input::placeholder{color:var(--g100);font-weight:400}
+  .name-hint{font-size:11px;color:var(--red);font-weight:700;display:none;margin-left:auto;white-space:nowrap}
+  .name-hint.show{display:block}
+
+  /* ── STATS ── */
+  .stats-row{display:grid;grid-template-columns:repeat(4,1fr);gap:10px;margin-bottom:22px}
+  .stat-card{background:#fff;border:1.5px solid var(--bdr);border-radius:var(--r);padding:12px 14px;text-align:center;box-shadow:var(--sh)}
+  .stat-icon{font-size:18px;margin-bottom:3px}
+  .stat-num{font-size:20px;font-weight:900;color:var(--dk);line-height:1}
+  .stat-lbl{font-size:10px;color:var(--hint);font-weight:700;text-transform:uppercase;letter-spacing:.05em;margin-top:2px}
+
+  /* ── CAT TABS ── */
+  .cat-tabs{display:flex;gap:7px;margin-bottom:18px;flex-wrap:wrap}
+  .cat-tab{padding:7px 14px;border-radius:20px;border:1.5px solid var(--bdrm);background:#fff;font-size:12px;font-weight:700;color:var(--muted);cursor:pointer;transition:all .18s;font-family:'Gotham','Arial',sans-serif;display:flex;align-items:center;gap:5px}
+  .cat-tab:hover{border-color:var(--dk);color:var(--dk)}
+  .cat-tab.active{background:var(--dk);border-color:var(--dk);color:#fff;box-shadow:0 2px 10px rgba(13,90,77,.3)}
+  .cat-tab-count{background:rgba(0,0,0,.15);border-radius:10px;padding:1px 6px;font-size:10px}
+  .cat-tab.active .cat-tab-count{background:rgba(255,255,255,.25)}
+
+  /* ── SECTION ── */
+  .section{margin-bottom:20px;animation:fadeUp .3s ease both}
+  @keyframes fadeUp{from{opacity:0;transform:translateY(8px)}to{opacity:1;transform:translateY(0)}}
+  .sec-hdr{display:flex;align-items:center;gap:11px;margin-bottom:8px;cursor:pointer;user-select:none;padding:4px 0}
+  .sec-icon{width:36px;height:36px;border-radius:10px;display:flex;align-items:center;justify-content:center;font-size:17px;flex-shrink:0;box-shadow:0 2px 8px rgba(0,0,0,.1)}
+  .sec-title{font-size:15px;font-weight:800;color:var(--txt);flex:1}
+  .sec-prog{display:flex;align-items:center;gap:7px}
+  .sec-track{width:56px;height:5px;background:var(--g100);border-radius:3px;overflow:hidden}
+  .sec-fill{height:100%;background:var(--dk);border-radius:3px;transition:width .4s ease}
+  .sec-badge{font-size:11px;font-weight:800;color:var(--hint)}
+  .sec-badge.done{color:var(--dk)}
+  .sec-badge.done::before{content:'✓ '}
+  .chevron{font-size:11px;color:var(--hint);transition:transform .2s;flex-shrink:0}
+  .chevron.open{transform:rotate(90deg)}
+
+  /* ── ITEMS ── */
+  .items-list{display:flex;flex-direction:column;gap:3px}
+  .item{display:flex;align-items:flex-start;gap:13px;padding:13px 15px;background:#fff;border:1.5px solid var(--bdr);border-radius:var(--r);transition:all .18s;box-shadow:var(--sh)}
+  .item:hover{border-color:var(--bdrm);box-shadow:var(--shm)}
+  .item.done{background:var(--mint);border-color:rgba(13,90,77,.2);box-shadow:none}
+  .cb{width:21px;height:21px;border:2px solid var(--g100);border-radius:6px;flex-shrink:0;margin-top:1px;cursor:pointer;display:flex;align-items:center;justify-content:center;transition:all .2s;background:#fff}
+  .cb:hover{border-color:var(--dk)}
+  .cb.checked{background:var(--dk);border-color:var(--dk);transform:scale(1.08)}
+  .cb.checked::after{content:'';display:block;width:5px;height:9px;border:2.5px solid #fff;border-top:none;border-left:none;transform:rotate(45deg) translateY(-1px)}
+  .item-body{flex:1;min-width:0}
+  .item-title{font-size:13px;font-weight:700;color:var(--txt);line-height:1.4}
+  .item.done .item-title{color:var(--dk);text-decoration:line-through;opacity:.7}
+  .item-desc{font-size:12px;color:var(--hint);margin-top:3px;line-height:1.5;font-weight:400}
+  .item.done .item-desc{opacity:.6}
+  .item-deadline{display:inline-block;font-size:10px;font-weight:700;margin-top:4px;padding:2px 8px;border-radius:20px;background:#fef3f3;color:var(--red);border:1px solid rgba(232,63,75,.2)}
+  .item-deadline.ok{background:#f0fff8;color:var(--dk);border-color:rgba(13,90,77,.2)}
+  .taken-tag{display:inline-flex;align-items:center;gap:4px;margin-top:7px;background:var(--dk);color:#fff;font-size:10px;font-weight:800;padding:2px 9px;border-radius:20px}
+  .taken-date{opacity:.7;font-weight:400}
+  .take-btn{flex-shrink:0;align-self:center;font-family:'Gotham','Arial',sans-serif;font-size:11px;font-weight:700;color:var(--dk);background:var(--mint);border:1.5px solid rgba(13,90,77,.25);border-radius:20px;padding:5px 12px;cursor:pointer;transition:all .18s;white-space:nowrap}
+  .take-btn:hover{background:var(--dk);color:#fff;border-color:var(--dk)}
+
+  /* ── CONTACT CARDS ── */
+  .contact-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(260px,1fr));gap:12px}
+  .contact-card{background:#fff;border:1.5px solid var(--bdr);border-radius:var(--rl);padding:16px 18px;box-shadow:var(--sh)}
+  .contact-card:hover{box-shadow:var(--shm);border-color:var(--bdrm)}
+  .cc-header{display:flex;align-items:center;gap:11px;margin-bottom:12px}
+  .cc-avatar{width:40px;height:40px;border-radius:50%;background:var(--mint);color:var(--dk);font-size:13px;font-weight:800;display:flex;align-items:center;justify-content:center;flex-shrink:0}
+  .cc-name{font-size:14px;font-weight:800;color:var(--txt)}
+  .cc-org{font-size:11px;color:var(--hint);margin-top:1px;font-weight:400}
+  .cc-tag{display:inline-block;font-size:10px;font-weight:700;background:var(--mint);color:var(--dk);padding:2px 8px;border-radius:20px;margin-bottom:8px}
+  .cc-row{display:flex;align-items:center;gap:8px;font-size:12px;color:var(--muted);margin-bottom:4px;font-weight:400}
+  .cc-row a{color:var(--dk);font-weight:700;text-decoration:none}
+  .cc-row a:hover{text-decoration:underline}
+  .cc-note{font-size:11px;color:var(--hint);margin-top:8px;line-height:1.5;padding-top:8px;border-top:1px solid var(--bdr)}
+
+  /* ── SPECIALISATIES ── */
+  .spec-grid{display:flex;flex-direction:column;gap:12px}
+  .spec-card{background:#fff;border:1.5px solid var(--bdr);border-radius:var(--rl);padding:18px 20px;box-shadow:var(--sh)}
+  .spec-title{font-size:14px;font-weight:800;color:var(--dk);margin-bottom:6px;display:flex;align-items:center;gap:8px}
+  .spec-title span{font-size:18px}
+  .spec-desc{font-size:13px;color:var(--muted);line-height:1.6}
+  .spec-steps{margin-top:10px;padding-left:0;list-style:none;display:flex;flex-direction:column;gap:4px}
+  .spec-steps li{font-size:12px;color:var(--muted);padding-left:16px;position:relative;line-height:1.5}
+  .spec-steps li::before{content:'→';position:absolute;left:0;color:var(--dk);font-weight:700}
+  .spec-badge{display:inline-flex;align-items:center;gap:5px;font-size:10px;font-weight:700;background:var(--mint);color:var(--dk);padding:3px 9px;border-radius:20px;margin-top:8px}
+
+  /* ── VAULT ── */
+  .vault-lock{text-align:center;padding:48px 24px}
+  .vault-icon{font-size:52px;margin-bottom:16px}
+  .vault-lock h2{font-size:20px;font-weight:800;color:var(--txt);margin-bottom:8px}
+  .vault-lock p{font-size:13px;color:var(--muted);margin-bottom:24px}
+  .pin-row{display:flex;gap:10px;justify-content:center;margin-bottom:20px}
+  .pin-dot{width:16px;height:16px;border-radius:50%;border:2px solid var(--dk);background:transparent;transition:all .2s}
+  .pin-dot.filled{background:var(--dk)}
+  .pin-pad{display:grid;grid-template-columns:repeat(3,1fr);gap:10px;max-width:220px;margin:0 auto}
+  .pin-btn{background:#fff;border:1.5px solid var(--bdr);border-radius:var(--r);padding:16px;font-size:18px;font-weight:800;color:var(--txt);cursor:pointer;font-family:'Gotham','Arial',sans-serif;transition:all .18s;box-shadow:var(--sh)}
+  .pin-btn:hover{background:var(--mint);border-color:var(--dk);color:var(--dk)}
+  .pin-btn:active{transform:scale(.95)}
+  .pin-clear{background:transparent;border:none;color:var(--hint);font-size:12px;font-weight:700;cursor:pointer;font-family:'Gotham','Arial',sans-serif;margin-top:12px;display:block;margin-left:auto;margin-right:auto}
+  .pin-error{color:var(--red);font-size:12px;font-weight:700;text-align:center;margin-top:8px;min-height:20px}
+  .vault-open{display:none}
+  .vault-open.show{display:block}
+  .vault-header{display:flex;align-items:center;justify-content:space-between;margin-bottom:18px}
+  .vault-header h2{font-size:16px;font-weight:800;color:var(--dk)}
+  .vault-lock-btn{background:transparent;border:1.5px solid var(--bdrm);border-radius:20px;padding:5px 14px;font-size:11px;font-weight:700;color:var(--muted);cursor:pointer;font-family:'Gotham','Arial',sans-serif}
+  .vault-lock-btn:hover{color:var(--red);border-color:var(--red)}
+  .vault-grid{display:flex;flex-direction:column;gap:8px}
+  .vault-item{background:#fff;border:1.5px solid var(--bdr);border-radius:var(--r);padding:14px 16px;box-shadow:var(--sh);display:flex;align-items:center;gap:14px}
+  .vi-icon{font-size:22px;flex-shrink:0}
+  .vi-body{flex:1;min-width:0}
+  .vi-name{font-size:13px;font-weight:800;color:var(--txt)}
+  .vi-user{font-size:12px;color:var(--muted);margin-top:2px}
+  .vi-pwd{font-size:12px;color:var(--hint);margin-top:2px;font-family:monospace;letter-spacing:.05em}
+  .vi-note{font-size:11px;color:var(--hint);margin-top:4px}
+  .vault-note{background:var(--mint);border:1.5px solid rgba(13,90,77,.2);border-radius:var(--r);padding:12px 16px;margin-bottom:16px;font-size:12px;color:var(--dk);font-weight:700}
+
+  /* ── MILESTONE / TOAST ── */
+  .milestone-banner{background:var(--leaf);color:#fff;border-radius:var(--rl);padding:14px 18px;margin-bottom:18px;display:flex;align-items:center;gap:12px;box-shadow:0 4px 20px rgba(138,189,36,.3);animation:slideIn .5s cubic-bezier(.4,0,.2,1)}
+  @keyframes slideIn{from{transform:translateY(-16px);opacity:0}to{transform:translateY(0);opacity:1}}
+  .toast{position:fixed;top:86px;right:22px;background:var(--dk);color:#fff;border-radius:var(--rl);padding:12px 16px;font-size:12px;font-weight:700;z-index:9999;display:flex;align-items:center;gap:9px;box-shadow:var(--shm);animation:toastIn .4s cubic-bezier(.4,0,.2,1);max-width:260px}
+  .toast.out{animation:toastOut .4s ease forwards}
+  @keyframes toastIn{from{transform:translateX(300px);opacity:0}to{transform:translateX(0);opacity:1}}
+  @keyframes toastOut{from{transform:translateX(0);opacity:1}to{transform:translateX(300px);opacity:0}}
+  .toast-icon{font-size:20px;flex-shrink:0}
+  .toast-msg strong{display:block;font-weight:900;font-size:13px}
+
+  /* ── FOOTER ── */
+  .footer-bar{position:fixed;bottom:0;left:0;right:0;background:#fff;border-top:2px solid var(--dk);padding:11px 28px;display:flex;align-items:center;justify-content:space-between;gap:14px;z-index:50;flex-wrap:wrap}
+  .footer-left{display:flex;align-items:center;gap:9px;font-size:12px;font-weight:700;color:var(--muted)}
+  .footer-lv{background:var(--dk);color:#fff;font-size:10px;font-weight:900;padding:3px 9px;border-radius:20px;text-transform:uppercase}
+  .reset-btn{font-family:'Gotham','Arial',sans-serif;font-size:11px;font-weight:700;color:var(--hint);background:transparent;border:1.5px solid var(--bdrm);border-radius:20px;padding:5px 12px;cursor:pointer;transition:all .15s}
+  .reset-btn:hover{color:var(--red);border-color:var(--red)}
+
+  /* ── ANIMATIONS ── */
+  @keyframes puppyPop{0%{transform:translateY(80px) scale(.4) rotate(-10deg);opacity:0}50%{transform:translateY(-18px) scale(1.3) rotate(5deg);opacity:1}75%{transform:translateY(4px) scale(.96) rotate(-2deg);opacity:1}100%{transform:translateY(80px) scale(.7);opacity:0}}
+  @keyframes confettiFall{0%{transform:translateY(0) rotate(0) scale(1);opacity:1}100%{transform:translateY(260px) rotate(540deg) scale(.3);opacity:0}}
+
+  @media(max-width:580px){
+    .stats-row{grid-template-columns:repeat(2,1fr)}
+    .hdr{padding:12px 16px}
+    .page{padding:16px 16px 0}
+    .hdr-xp{display:none}
+    .nav-tab{padding:8px 12px;font-size:11px}
+  }
+</style>
+</head>
+<body>
+
+<header class="site-header">
+  <div class="hdr">
+    <div class="hdr-brand">
+      <div class="logo-badge">🐾</div>
+      <div class="hdr-titles">
+        <h1>Overdracht Maurice Laval</h1>
+        <p>Prins Petfoods · Einddatum 24 april 2026</p>
+      </div>
+    </div>
+    <div class="hdr-xp">
+      <div class="xp-label">Overdracht voortgang</div>
+      <div class="xp-row">
+        <div class="xp-pct" id="pct">0%</div>
+        <div class="xp-track"><div class="xp-fill" id="pbar" style="width:0%"></div></div>
+      </div>
+      <div class="lv-badge"><span id="lvIcon">⭐</span><span id="lvText">Niveau 1 — Starter</span></div>
+    </div>
+  </div>
+</header>
+
+<div class="page">
+
+  <div id="milestoneBanner" style="display:none"></div>
+
+  <!-- TOP NAV -->
+  <div class="nav-tabs">
+    <button class="nav-tab active" onclick="switchPanel('taken')" id="ntTaken"><span class="nt-icon">✅</span> Taken & projecten</button>
+    <button class="nav-tab" onclick="switchPanel('contacten')" id="ntContacten"><span class="nt-icon">👥</span> Contacten</button>
+    <button class="nav-tab" onclick="switchPanel('spec')" id="ntSpec"><span class="nt-icon">🧠</span> Specialisaties</button>
+    <button class="nav-tab" onclick="switchPanel('vault')" id="ntVault"><span class="nt-icon">🔐</span> Accounts & toegang</button>
+  </div>
+
+  <!-- ═══════════════════════════════════════════════
+       PANEL 1: TAKEN & PROJECTEN
+  ════════════════════════════════════════════════ -->
+  <div class="panel active" id="panelTaken">
+
+    <div class="farewell">
+      <div class="farewell-icon">🌿</div>
+      <div class="fn-lbl">Persoonlijk bericht van Maurice</div>
+      <p>Na mooie jaren bij Prins Petfoods draag ik hierbij zo volledig mogelijk over. Dit document geeft een overzicht van alle lopende projecten, contacten en werkwijzen. Vink per punt aan wie het oppakt — zo loopt er niets door de mazen. Bedankt voor alles, en veel succes!</p>
+    </div>
+
+    <div class="user-card">
+      <div class="avatar" id="avatar">?</div>
+      <label for="nameField">Aftekenen als:</label>
+      <input id="nameField" type="text" placeholder="Vul hier je naam in..." maxlength="40" autocomplete="off"/>
+      <span class="name-hint" id="nameHint">⚠ Vul eerst je naam in</span>
+    </div>
+
+    <div class="stats-row">
+      <div class="stat-card"><div class="stat-icon">✅</div><div class="stat-num" id="statDone">0</div><div class="stat-lbl">Overgedragen</div></div>
+      <div class="stat-card"><div class="stat-icon">⏳</div><div class="stat-num" id="statOpen">0</div><div class="stat-lbl">Nog open</div></div>
+      <div class="stat-card"><div class="stat-icon">🏅</div><div class="stat-num" id="statStreak">0</div><div class="stat-lbl">Streak</div></div>
+      <div class="stat-card"><div class="stat-icon">⚡</div><div class="stat-num" id="statXP">0</div><div class="stat-lbl">XP</div></div>
+    </div>
+
+    <div class="cat-tabs" id="catTabs"></div>
+    <div id="sections"></div>
+  </div>
+
+  <!-- ═══════════════════════════════════════════════
+       PANEL 2: CONTACTEN
+  ════════════════════════════════════════════════ -->
+  <div class="panel" id="panelContacten">
+    <div class="contact-grid" id="contactGrid"></div>
+  </div>
+
+  <!-- ═══════════════════════════════════════════════
+       PANEL 3: SPECIALISATIES
+  ════════════════════════════════════════════════ -->
+  <div class="panel" id="panelSpec">
+    <div class="spec-grid" id="specGrid"></div>
+  </div>
+
+  <!-- ═══════════════════════════════════════════════
+       PANEL 4: VAULT
+  ════════════════════════════════════════════════ -->
+  <div class="panel" id="panelVault">
+    <div class="vault-lock" id="vaultLock">
+      <div class="vault-icon">🔐</div>
+      <h2>Accounts & toegang</h2>
+      <p>Voer de 4-cijferige pincode in om de accountgegevens te bekijken.</p>
+      <div class="pin-row" id="pinDots">
+        <div class="pin-dot" id="d0"></div>
+        <div class="pin-dot" id="d1"></div>
+        <div class="pin-dot" id="d2"></div>
+        <div class="pin-dot" id="d3"></div>
+      </div>
+      <div class="pin-pad">
+        <button class="pin-btn" onclick="pinInput('1')">1</button>
+        <button class="pin-btn" onclick="pinInput('2')">2</button>
+        <button class="pin-btn" onclick="pinInput('3')">3</button>
+        <button class="pin-btn" onclick="pinInput('4')">4</button>
+        <button class="pin-btn" onclick="pinInput('5')">5</button>
+        <button class="pin-btn" onclick="pinInput('6')">6</button>
+        <button class="pin-btn" onclick="pinInput('7')">7</button>
+        <button class="pin-btn" onclick="pinInput('8')">8</button>
+        <button class="pin-btn" onclick="pinInput('9')">9</button>
+        <button class="pin-btn" onclick="pinClear()" style="font-size:14px;color:var(--hint)">⌫</button>
+        <button class="pin-btn" onclick="pinInput('0')">0</button>
+        <button class="pin-btn" onclick="pinClear()" style="font-size:12px;color:var(--hint)">✕</button>
+      </div>
+      <div class="pin-error" id="pinError"></div>
+    </div>
+    <div class="vault-open" id="vaultOpen">
+      <div class="vault-header">
+        <h2>🔓 Accounts & toegang</h2>
+        <button class="vault-lock-btn" onclick="lockVault()">🔒 Vergrendelen</button>
+      </div>
+      <div class="vault-note">⚠️ Vertrouwelijk — deel deze pagina niet via schermopnames of openbare kanalen.</div>
+      <div class="vault-grid" id="vaultGrid"></div>
+    </div>
+  </div>
+
+</div>
+
+<div class="footer-bar">
+  <div class="footer-left">
+    <span class="footer-lv" id="footerLv">LV 1</span>
+    <span id="footerStatus">Begin met overdragen!</span>
+  </div>
+  <button class="reset-btn" onclick="resetAll()">↺ Reset alles</button>
+</div>
+
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2/dist/umd/supabase.min.js" onload="window.supabaseLib=window.supabase"></script>
+<script>
+// ═══════════════════════════════════════════
+// DATA
+// ═══════════════════════════════════════════
+
+const TAKEN = [
+  {
+    id: 'projecten',
+    label: 'Projecten & opdrachten',
+    icon: '📋',
+    bg: '#E6F1FB',
+    items: [
+      { id:'p1', title:'AVONTURIA — retail inrichting', desc:'Grote retail inrichting bij Avonturia (dierenspeciaalzaak). Loopt via Louisa (Sales) en Kathy (Buitendienst). Contactpersoon ter plaatse: Manouk Verheij. Deadline verstreken — opvolging vereist.', deadline:'13-3-2026', expired:true },
+      { id:'p2', title:'Puppy en Kitten POS materialen', desc:'POS-materialen voor puppy en kitten productlijn. Deadline 31 maart. Check status productie en plaatsing.', deadline:'31-3-2026', expired:true },
+      { id:'p3', title:'Alternatief voor PassePartout vinden', desc:'Zoek alternatief voor PassePartout (stalen schapstroken). Offerte aangevraagd of alternatieve leverancier zoeken. Deadline 3 april.', deadline:'3-4-2026', expired:false },
+      { id:'p4', title:'EduPet | Flyer 10% kortingsactie basiskennis', desc:'Flyer voor kortingsactie basiskennis bij EduPet. Ontwerp gereed of nog te starten. Deadline 10 april.', deadline:'10-4-2026', expired:false },
+      { id:'p5', title:'Give-away actie ProCare en VitalCare', desc:'Give-away campagne voor ProCare en VitalCare. Afstemmen met marketing. Deadline 20 april.', deadline:'20-4-2026', expired:false },
+      { id:'p6', title:'Gezondheidsplein Accustraat 1 — opvolging', desc:'Diverse openstaande punten: grootverpakkingen imitatie op onderste planken veterinair schap, nieuwe plank diepvries, magneetplaten nakijken (kat vervangen), wanddoek vervangen met winkelideeën-doek, health consultant folderrek weghalen. Afstemmen met Anique en Louisa.', deadline:'', expired:false },
+      { id:'p7', title:'Snacktafel AE kleiner maken en op doek drukken', desc:'Ontwerp snacktafel Avonturia Eindhoven aanpassen naar kleinere maat en laten drukken op doek. Afstemmen met Axent Reclame.', deadline:'', expired:false },
+    ]
+  },
+  {
+    id: 'veterinair',
+    label: 'Veterinair materiaal',
+    icon: '🩺',
+    bg: '#E8F5E9',
+    items: [
+      { id:'v1', title:'Dieetwijzers — 7 thema\'s (hond & kat)', desc:'Omzetten naar compact vierluik. Prioriteit: Overgewicht (hond + kat) — meeste vraag volgens Louisa. Overig: Voedselovergevoeligheid, Nierfalen, Leverfalen, Gewrichten, Blaasgruis, Diabetes. R&D heeft conceptteksten klaar. Bestand: smb://192.168.10.143/marketing/01_Prins/Vormgeving/Productlijnen/Hond en kat/Dieet/Dieetwijzer', deadline:'', expired:false },
+      { id:'v2', title:'Flip-over "Gezond met Prins" vernieuwen', desc:'Moderne variant van bestaande flip-over. Concept mag grotendeels hetzelfde blijven. Ward checkt de tekst. Starten met ontwerp kan alvast. Oud bestand: smb://192.168.10.143/archief_2025/Team Iris/Prins/Projekten/Gezond met Prins/Flipover', deadline:'', expired:false },
+    ]
+  },
+  {
+    id: 'displays',
+    label: 'Displays & offertes',
+    icon: '🗃️',
+    bg: '#FFF3E0',
+    items: [
+      { id:'d1', title:'Display offerte — 25 stuks export (Gertjan & Jasja)', desc:'Opdracht vanuit Gertjan en Jasja voor export only. 25 stuks, 3 planken, ca. 65 cm breed, 18 zakken diervoeding (3 x 2 diep, 3 planken hoog). Verwisselbare topkaart. Levering uiterlijk eind april. Offertes uitstaan bij: HolBox (info@holbox.nl), CartoFactory (Maurice van Gool) en Eldrut POS (Patryk — aluminium origami display).', deadline:'30-4-2026', expired:false },
+      { id:'d2', title:'Doeken Avonturia — Axent Reclame', desc:'3x doek tbv textielframe (280x40 cm), full colour geprint, doek met peesprofiel. Offerte 202600104 geaccepteerd? Totaal €444,07 incl. BTW. Plaatsing door Axent optioneel (€250). Contactpersoon: Gerard van de Bovenkamp.', deadline:'', expired:false },
+      { id:'d3', title:'Magneetplaten Gezondheidsplein — Axent Reclame', desc:'12 magneetstickers (1x 200x45cm + 2x 100x45cm in 2 designs + 10x 100x45cm). Offerte 202600133. Totaal €420 excl. BTW. Levertijd ca. 1 werkweek. Leveradres Accustraat 3-5.', deadline:'', expired:false },
+      { id:'d4', title:'Hangschap treats Avonturia — Axent Reclame', desc:'Hangschap voor treats productlijn bij Avonturia. Ontwerp + productie via Gerard van de Bovenkamp (Axent). Afstemmen of ontwerp al gereed is.', deadline:'', expired:false },
+    ]
+  },
+  {
+    id: 'systemen',
+    label: 'Systemen & bestanden',
+    icon: '🗂️',
+    bg: '#F3E5F5',
+    items: [
+      { id:'s1', title:'Canva Brand Kit — Prins Petfoods', desc:'Brand kit met logo\'s, merkfonts, kleuren en templates. Toegang overdragen naar opvolger. Zie Accounts & toegang tab voor inloggegevens.', deadline:'', expired:false },
+      { id:'s2', title:'SMB marketingmap — creatieve assets', desc:'Primaire bestandslocatie: smb://192.168.10.143/marketing/01_Prins/Vormgeving/ — bevat alle productlijnen, POS-materialen, dieetwijzers, campagnes en drukbestanden.', deadline:'', expired:false },
+      { id:'s3', title:'SMB archief 2025', desc:'Archieflocatie: smb://192.168.10.143/archief_2025/ — bevat oudere artwork, flip-over versies, historische projecten.', deadline:'', expired:false },
+      { id:'s4', title:'Microsoft Planner — takenoverzicht', desc:'Alle lopende taken staan in Microsoft Planner (Teams). Overdragen of toewijzen aan opvolger. Vraag IT om toegangsoverdracht.', deadline:'', expired:false },
+    ]
+  }
+];
+
+const CONTACTS = [
+  { name:'Gerard van de Bovenkamp', org:'Axent Reclame', initials:'GB', tag:'Leverancier drukwerk & signing', email:'gerard@axentreclame.nl', phone:'0318 555 322', note:'Vaste leverancier voor canvasdoeken, magneetplaten, signing en POS-drukwerk. Offertebeheer loopt via Maurice — altijd projectnummer meesturen.' },
+  { name:'Manouk Verheij', org:'Avonturia', initials:'MV', tag:'Klant — retail', email:'manouk@avonturia.nl', phone:'', note:'Contactpersoon bij Avonturia voor alle retail inrichtingsprojecten. Loopt intern via Louisa (Sales) en Kathy (Buitendienst).' },
+  { name:'Roger Grinwis', org:'ISDisplay / De Haan Group', initials:'RG', tag:'Leverancier displays', email:'rogergrinwis@dehaangroup.nl', phone:'', note:'Verantwoordelijk voor palletdisplay, Highlighter en vriezerombouw (o.a. Miro Voorthuizen). Altijd specs meesturen bij aanvraag.' },
+  { name:'Maurice van Gool', org:'CartoFactory', initials:'MG', tag:'Leverancier displays', email:'maurice@cartofactory.com', phone:'', note:'Offerte aangevraagd voor de 25 export displays. Nog geen terugkoppeling ontvangen.' },
+  { name:'Patryk Krawiec', org:'Eldrut POS', initials:'PK', tag:'Leverancier displays', email:'p.krawiec@eldrut-pos.com', phone:'', note:'Contactpersoon voor aluminium origami display. Offerte aangevraagd voor 25 export stuks.' },
+  { name:'HolBox', org:'HolBox', initials:'HB', tag:'Leverancier displays', email:'info@holbox.nl', phone:'', note:'Offerte aangevraagd voor de 25 export displays. Nog geen terugkoppeling ontvangen.' },
+  { name:'Louisa', org:'Prins Petfoods — Sales', initials:'LO', tag:'Intern — Sales Manager', email:'', phone:'', note:'Sales Manager. Primaire interne contactpersoon voor retailprojecten en veterinaire prioriteiten. Avonturia loopt via haar.' },
+  { name:'Kathy', org:'Prins Petfoods — Buitendienst', initials:'KA', tag:'Intern — Buitendienst', email:'', phone:'', note:'Buitendienst Prins. Betrokken bij Avonturia en retailklanten.' },
+  { name:'Anique', org:'Prins Petfoods', initials:'AN', tag:'Intern', email:'', phone:'', note:'Betrokken bij Gezondheidsplein Accustraat 1. Openstaande punten afstemmen met haar en Louisa.' },
+  { name:'Ward', org:'Prins Petfoods', initials:'WA', tag:'Intern', email:'', phone:'', note:'Controleert en actualiseert teksten voor de flip-over "Gezond met Prins".' },
+  { name:'Mathieu', org:'Prins Petfoods', initials:'MA', tag:'Intern', email:'', phone:'', note:'Samenwerking bij het aanmaken van gepersonaliseerde vouchercodes via HelloPrint.' },
+  { name:'Gertjan Willems', org:'Prins Petfoods — Directie', initials:'GW', tag:'Intern — Directie', email:'', phone:'', note:'Directie. Opdrachtgever voor de 25 export displays (samen met Jasja).' },
+];
+
+const SPECS = [
+  {
+    icon:'🎟️',
+    title:'Gepersonaliseerde vouchercodes aanmaken',
+    desc:'Op basis van offertes worden via HelloPrint voucherkaarten aangemaakt met unieke, gepersonaliseerde codes. Dit verloopt altijd in samenwerking met Mathieu.',
+    steps:[
+      'Ontvang offerte of aanvraag voor voucheractie',
+      'Bepaal aantal codes en formaat (HelloPrint template)',
+      'Genereer codelogica samen met Mathieu',
+      'Bestelling plaatsen via HelloPrint account (zie Accounts & toegang)',
+      'Drukklare PDF aanleveren conform HelloPrint specs',
+      'Na ontvangst: codes koppelen aan campagne/actie',
+    ],
+    badge:'HelloPrint + Mathieu'
+  },
+  {
+    icon:'🛒',
+    title:'Retail inrichting & site visits',
+    desc:'Bij nieuwe of te vernieuwen retaillocaties wordt altijd een site visit gedaan. Avonturia is het meest recente uitgebreide voorbeeld. Werkwijze:',
+    steps:[
+      'Afspraak maken via Louisa of Kathy (buitendienst)',
+      'Ter plaatse opmeten: vloer, hoogte, schappen, loze hoeken',
+      'Foto\'s maken van huidige situatie',
+      'Inrichtingsplan opstellen (signing, POS, canvassen, displays)',
+      'Offertes opvragen bij vaste leveranciers (Axent, ISDisplay)',
+      'Goedkeuring intern (Louisa/Gertjan) voor opdrachtverstrekking',
+      'Productiebegeleiding en plaatsing coördineren',
+    ],
+    badge:'Louisa + Kathy + Axent + ISDisplay'
+  },
+  {
+    icon:'🐾',
+    title:'POS & drukwerk aanleveren bij Axent Reclame',
+    desc:'Alle drukbestanden voor POS-materiaal, canvassen, magneetplaten en signing gaan via Axent Reclame (Gerard van de Bovenkamp).',
+    steps:[
+      'Ontwerp afronden in Adobe CC conform Prins huisstijl',
+      'Drukbestand exporteren: PDF/X-1a, 3mm afloop, 300 DPI',
+      'Offerte opvragen bij Gerard met afmetingen en oplage',
+      'Na akkoord: bestand mailen naar gerard@axentreclame.nl',
+      'Altijd projectnummer en offertenummer vermelden',
+      'Drukproef opvragen voor akkoord — nooit blind laten drukken',
+    ],
+    badge:'gerard@axentreclame.nl'
+  },
+  {
+    icon:'🩺',
+    title:'Veterinair materiaal — werkwijze',
+    desc:'Veterinaire materialen (dieetwijzers, flip-over, productflyers) volgen een vaste route van briefing tot productie.',
+    steps:[
+      'Teksten aanleveren vanuit R&D of product management',
+      'Intern review met Ward (tekst) en Louisa (inhoudelijk)',
+      'Ontwerp starten conform veterinaire huisstijl (zie brand guide)',
+      'Definitieve teksten verwerken voor druk',
+      'Opmaak aanleveren bij Axent of andere drukker',
+      'Prioriteit ligt altijd bij overgewicht (meeste vraag)',
+    ],
+    badge:'R&D + Ward + Louisa'
+  },
+  {
+    icon:'📐',
+    title:'Planogram veterinaire schappen',
+    desc:'De planogrammen voor veterinaire productlijnen worden bijgehouden in Excel en zijn de basis voor alle schapinrichtingen bij retailers.',
+    steps:[
+      'Meest actuele planogram: smb://192.168.10.143/marketing/01_Prins/',
+      'Altijd afstemmen met productmanagement voor wijzigingen',
+      'Bij nieuwe producten: maatvoering opvragen bij product team',
+      'Contactpersoon productmanagement: [naam invullen]',
+    ],
+    badge:'Excel planogram'
+  },
+];
+
+const VAULT = [
+  { icon:'🎨', name:'Canva', user:'marketing@prinspetfoods.nl', pwd:'[vul in]', note:'Brand Kit Prins Petfoods — bevat logo\'s, fonts, kleurenpalet en templates' },
+  { icon:'🖨️', name:'HelloPrint', user:'[e-mail invullen]', pwd:'[vul in]', note:'Voor drukwerk offertes en voucherkaarten. Altijd specs dubbel checken voor bestelling.' },
+  { icon:'📦', name:'Axent Reclame — klantportal', user:'[e-mail invullen]', pwd:'[vul in]', note:'Offertes en projectnummers via gerard@axentreclame.nl of portaal' },
+  { icon:'📋', name:'Microsoft 365 / Planner', user:'m.laval@prinspetfoods.nl', pwd:'[via IT over te dragen]', note:'Takenbeheer, Teams en SharePoint. IT inschakelen voor overdracht account.' },
+];
+
+// ═══════════════════════════════════════════
+// SUPABASE
+// ═══════════════════════════════════════════
+const SUPABASE_URL = 'https://kcpxquaodyruodylcekt.supabase.co';
+const SUPABASE_KEY = 'sb_publishable_i71uqJLJVP2SQ-AXrKldDw_XyDAMgE3';
+let supabase = null;
+
+async function initSupabase() {
+  const { createClient } = window.supabaseLib;
+  supabase = createClient(SUPABASE_URL, SUPABASE_KEY);
+  await loadFromSupabase();
+  subscribeRealtime();
+}
+
+async function loadFromSupabase() {
+  try {
+    const { data, error } = await supabase.from('overdracht_items').select('*');
+    if (error) { console.error('Load error:', error); return; }
+    state = {};
+    (data || []).forEach(row => {
+      if (row.done) state[row.id] = { done: true, by: row.checked_by, date: row.checked_date };
+    });
+    xp = doneItems() * 10;
+    renderSections(); updateUI();
+  } catch(e) { console.error('Supabase load failed:', e); }
+}
+
+async function saveItemToSupabase(id, done, by, date) {
+  try {
+    await supabase.from('overdracht_items').upsert({
+      id, done, checked_by: by || null, checked_date: date || null, updated_at: new Date().toISOString()
+    }, { onConflict: 'id' });
+  } catch(e) { console.error('Supabase save failed:', e); }
+}
+
+function subscribeRealtime() {
+  supabase.channel('overdracht-live')
+    .on('postgres_changes', { event: '*', schema: 'public', table: 'overdracht_items' }, payload => {
+      const row = payload.new;
+      if (!row) return;
+      if (!row.done) { delete state[row.id]; }
+      else { state[row.id] = { done: true, by: row.checked_by, date: row.checked_date }; }
+      xp = doneItems() * 10;
+      renderSections(); updateUI();
+    })
+    .subscribe();
+}
+
+// ═══════════════════════════════════════════
+// STATE
+// ═══════════════════════════════════════════
+let state = {}, streak = 0, xp = 0, activeFilter = 'all';
+const PIN = '1963';
+let pinEntry = '';
+
+const LEVELS = [
+  {min:0,lv:1,label:'Starter',icon:'⭐'},
+  {min:3,lv:2,label:'Opwarmer',icon:'🌱'},
+  {min:6,lv:3,label:'Op dreef',icon:'🔥'},
+  {min:10,lv:4,label:'Halverwege',icon:'⚡'},
+  {min:14,lv:5,label:'Bijna klaar',icon:'🏆'},
+  {min:18,lv:6,label:'Bijna compleet',icon:'🌟'},
+  {min:20,lv:7,label:'VOLLEDIG OVERGEDRAGEN',icon:'🎉'},
+];
+const MILESTONES = {
+  5:{icon:'🐶',msg:'Eerste 5 afgetekend!',sub:'Goed bezig — de staart begint te kwispelen.'},
+  10:{icon:'🐕',msg:'Halverwege!',sub:'50% — dit gaat als een trein.'},
+  15:{icon:'🦮',msg:'15 punten klaar!',sub:'Bijna — nog even volhouden.'},
+  20:{icon:'🏆',msg:'Overdracht compleet!',sub:'Maurice heeft alles overgedragen. Chapeau!'},
+};
+const puppyEmojis = ['🐶','🐕','🐾','🦮','🐩','🐕‍🦺'];
+const confettiColors = ['#0d5a4d','#8abd24','#a2c4ba','#e83f4b','#1a7a6a','#fff'];
+
+function totalItems() { return TAKEN.reduce((a,s) => a + s.items.length, 0); }
+function doneItems() { return Object.values(state).filter(v => v && v.done).length; }
+function getLevel(d) { let l=LEVELS[0]; for(const x of LEVELS){if(d>=x.min)l=x;} return l; }
+
+function updateUI() {
+  const done=doneItems(), total=totalItems(), pct=Math.round(done/total*100);
+  document.getElementById('pct').textContent=pct+'%';
+  document.getElementById('pbar').style.width=pct+'%';
+  document.getElementById('statDone').textContent=done;
+  document.getElementById('statOpen').textContent=total-done;
+  document.getElementById('statStreak').textContent=streak;
+  document.getElementById('statXP').textContent=xp;
+  const lv=getLevel(done);
+  document.getElementById('lvIcon').textContent=lv.icon;
+  document.getElementById('lvText').textContent=`Niveau ${lv.lv} — ${lv.label}`;
+  document.getElementById('footerLv').textContent=`LV ${lv.lv}`;
+  const fs=document.getElementById('footerStatus');
+  if(done===0) fs.textContent='Begin met overdragen — elk punt telt!';
+  else if(done===total) fs.textContent=`${lv.icon} Overdracht volledig afgerond — Prins-kwaliteit!`;
+  else fs.textContent=`${done} van de ${total} punten overgedragen · ${pct}% klaar`;
+  updateTabCounts();
+}
+
+function updateTabCounts() {
+  TAKEN.forEach(s => {
+    const done=s.items.filter(i=>state[i.id]&&state[i.id].done).length;
+    const el=document.querySelector(`[data-filter="${s.id}"] .cat-tab-count`);
+    if(el) el.textContent=`${done}/${s.items.length}`;
+  });
+}
+
+// ── PANEL SWITCH ──
+function switchPanel(name) {
+  document.querySelectorAll('.panel').forEach(p=>p.classList.remove('active'));
+  document.querySelectorAll('.nav-tab').forEach(t=>t.classList.remove('active'));
+  document.getElementById('panel'+name.charAt(0).toUpperCase()+name.slice(1)).classList.add('active');
+  document.getElementById('nt'+name.charAt(0).toUpperCase()+name.slice(1)).classList.add('active');
+}
+
+// ── BUILD TABS ──
+function buildTabs() {
+  const c=document.getElementById('catTabs');
+  c.innerHTML='';
+  const all=document.createElement('button');
+  all.className='cat-tab active'; all.dataset.filter='all';
+  all.innerHTML=`Alles <span class="cat-tab-count">${totalItems()}</span>`;
+  all.onclick=()=>setFilter('all'); c.appendChild(all);
+  TAKEN.forEach(s=>{
+    const btn=document.createElement('button');
+    btn.className='cat-tab'; btn.dataset.filter=s.id;
+    btn.innerHTML=`${s.icon} ${s.label} <span class="cat-tab-count">0/${s.items.length}</span>`;
+    btn.onclick=()=>setFilter(s.id); c.appendChild(btn);
+  });
+}
+function setFilter(id) {
+  activeFilter=id;
+  document.querySelectorAll('.cat-tab').forEach(b=>b.classList.toggle('active',b.dataset.filter===id));
+  renderSections();
+}
+
+// ── RENDER SECTIONS ──
+function renderSections() {
+  const container=document.getElementById('sections');
+  container.innerHTML='';
+  const toShow=activeFilter==='all'?TAKEN:TAKEN.filter(s=>s.id===activeFilter);
+  toShow.forEach((section,si)=>{
+    const sdone=section.items.filter(i=>state[i.id]&&state[i.id].done).length;
+    const total=section.items.length;
+    const fillPct=Math.round(sdone/total*100);
+    const sec=document.createElement('div');
+    sec.className='section'; sec.style.animationDelay=(si*.07)+'s';
+    const hdr=document.createElement('div'); hdr.className='sec-hdr';
+    hdr.innerHTML=`
+      <div class="sec-icon" style="background:${section.bg}">${section.icon}</div>
+      <div class="sec-title">${section.label}</div>
+      <div class="sec-prog">
+        <div class="sec-track"><div class="sec-fill" style="width:${fillPct}%"></div></div>
+        <div class="sec-badge${sdone===total&&total>0?' done':''}">${sdone}/${total}</div>
+      </div>
+      <div class="chevron open" id="chev-${section.id}">›</div>`;
+    const list=document.createElement('div'); list.className='items-list';
+    section.items.forEach(item=>{
+      const s=state[item.id]||{}, isDone=!!s.done;
+      const el=document.createElement('div');
+      el.className='item'+(isDone?' done':'');
+      let deadlineHTML='';
+      if(item.deadline){
+        deadlineHTML=`<div class="item-deadline${item.expired?' ':' ok'}">${item.expired?'⚠ Verlopen: ':'📅 Deadline: '}${item.deadline}</div>`;
+      }
+      el.innerHTML=`
+        <div class="cb${isDone?' checked':''}" id="cb-${item.id}"></div>
+        <div class="item-body">
+          <div class="item-title">${item.title}</div>
+          <div class="item-desc">${item.desc}</div>
+          ${deadlineHTML}
+          ${isDone&&s.by?`<div><span class="taken-tag">✓ ${s.by} <span class="taken-date">· ${s.date}</span></span></div>`:''}
+        </div>
+        ${!isDone?`<button class="take-btn" data-id="${item.id}">Ik pak dit op →</button>`:''}`;
+      function doToggle(){
+        const name=document.getElementById('nameField').value.trim();
+        if(!isDone&&!name){
+          const h=document.getElementById('nameHint'); h.classList.add('show');
+          document.getElementById('nameField').focus();
+          setTimeout(()=>h.classList.remove('show'),2500); return;
+        }
+        if(!isDone){
+          const now=new Date();
+          const date=now.toLocaleDateString('nl-NL',{day:'numeric',month:'long'});
+          state[item.id]={done:true,by:name,date};
+          streak++; xp+=10;
+          saveItemToSupabase(item.id, true, name, date);
+          checkMilestone(doneItems()); showToast(); spawnPuppy();
+          renderSections(); updateUI();
+        } else {
+          delete state[item.id]; streak=Math.max(0,streak-1); xp=Math.max(0,xp-10);
+          saveItemToSupabase(item.id, false, null, null);
+          renderSections(); updateUI();
+        }
+      }
+      el.querySelector('.cb').addEventListener('click',doToggle);
+      const btn=el.querySelector('.take-btn'); if(btn) btn.addEventListener('click',doToggle);
+      list.appendChild(el);
+    });
+    let open=true;
+    hdr.addEventListener('click',()=>{
+      open=!open; list.style.display=open?'flex':'none';
+      const chev=document.getElementById('chev-'+section.id);
+      if(chev) chev.classList.toggle('open',open);
+    });
+    sec.appendChild(hdr); sec.appendChild(list); container.appendChild(sec);
+  });
+  updateUI();
+}
+
+// ── RENDER CONTACTS ──
+function renderContacts() {
+  const grid=document.getElementById('contactGrid');
+  CONTACTS.forEach(c=>{
+    const card=document.createElement('div'); card.className='contact-card';
+    card.innerHTML=`
+      <div class="cc-header">
+        <div class="cc-avatar">${c.initials}</div>
+        <div><div class="cc-name">${c.name}</div><div class="cc-org">${c.org}</div></div>
+      </div>
+      <div class="cc-tag">${c.tag}</div>
+      ${c.email?`<div class="cc-row">📧 <a href="mailto:${c.email}">${c.email}</a></div>`:''}
+      ${c.phone?`<div class="cc-row">📞 ${c.phone}</div>`:''}
+      ${c.note?`<div class="cc-note">${c.note}</div>`:''}`;
+    grid.appendChild(card);
+  });
+}
+
+// ── RENDER SPECS ──
+function renderSpecs() {
+  const grid=document.getElementById('specGrid');
+  SPECS.forEach(s=>{
+    const card=document.createElement('div'); card.className='spec-card';
+    card.innerHTML=`
+      <div class="spec-title"><span>${s.icon}</span>${s.title}</div>
+      <div class="spec-desc">${s.desc}</div>
+      <ul class="spec-steps">${s.steps.map(st=>`<li>${st}</li>`).join('')}</ul>
+      <div class="spec-badge">👤 Betrokken: ${s.badge}</div>`;
+    grid.appendChild(card);
+  });
+}
+
+// ── RENDER VAULT ──
+function renderVault() {
+  const grid=document.getElementById('vaultGrid');
+  VAULT.forEach(v=>{
+    const el=document.createElement('div'); el.className='vault-item';
+    el.innerHTML=`
+      <div class="vi-icon">${v.icon}</div>
+      <div class="vi-body">
+        <div class="vi-name">${v.name}</div>
+        <div class="vi-user">👤 ${v.user}</div>
+        <div class="vi-pwd">🔑 ${v.pwd}</div>
+        ${v.note?`<div class="vi-note">${v.note}</div>`:''}
+      </div>`;
+    grid.appendChild(el);
+  });
+}
+
+// ── PIN ──
+function pinInput(digit) {
+  if(pinEntry.length>=4) return;
+  pinEntry+=digit;
+  document.getElementById('d'+(pinEntry.length-1)).classList.add('filled');
+  if(pinEntry.length===4){
+    setTimeout(()=>{
+      if(pinEntry===PIN){
+        document.getElementById('vaultLock').style.display='none';
+        document.getElementById('vaultOpen').classList.add('show');
+        document.getElementById('pinError').textContent='';
+      } else {
+        document.getElementById('pinError').textContent='Verkeerde pincode — probeer opnieuw.';
+        pinEntry='';
+        [0,1,2,3].forEach(i=>document.getElementById('d'+i).classList.remove('filled'));
+      }
+    },200);
+  }
+}
+function pinClear() {
+  pinEntry=''; [0,1,2,3].forEach(i=>document.getElementById('d'+i).classList.remove('filled'));
+  document.getElementById('pinError').textContent='';
+}
+function lockVault() {
+  document.getElementById('vaultLock').style.display='';
+  document.getElementById('vaultOpen').classList.remove('show');
+  pinClear();
+}
+
+// ── MILESTONE ──
+function checkMilestone(done) {
+  const m=MILESTONES[done]; if(!m) return;
+  const b=document.getElementById('milestoneBanner');
+  b.innerHTML=`<div class="milestone-banner"><div style="font-size:32px">${m.icon}</div><div><strong style="font-size:15px;font-weight:900">${m.msg}</strong><div style="font-size:12px;opacity:.85;margin-top:2px">${m.sub}</div></div></div>`;
+  b.style.display='block';
+  if(done<20) setTimeout(()=>b.style.display='none',5000);
+}
+
+// ── TOAST ──
+let toastTO=null;
+function showToast() {
+  const msgs=[
+    {icon:'🐶',msg:'Afgetekend!',sub:'+10 XP verdiend'},
+    {icon:'🐾',msg:'Goed bezig!',sub:'Streak loopt op'},
+    {icon:'⚡',msg:'Zo gaat dat!',sub:'Quality first!'},
+    {icon:'🌿',msg:'Prins-kwaliteit!',sub:'+10 XP'},
+  ];
+  const t=msgs[Math.floor(Math.random()*msgs.length)];
+  const el=document.createElement('div'); el.className='toast';
+  el.innerHTML=`<div class="toast-icon">${t.icon}</div><div class="toast-msg"><strong>${t.msg}</strong>${t.sub}</div>`;
+  document.body.appendChild(el);
+  clearTimeout(toastTO);
+  toastTO=setTimeout(()=>{el.classList.add('out');setTimeout(()=>el.remove(),400);},2200);
+}
+
+// ── PUPPY ──
+function spawnPuppy() {
+  const emoji=puppyEmojis[Math.floor(Math.random()*puppyEmojis.length)];
+  const el=document.createElement('div');
+  el.textContent=emoji;
+  el.style.cssText=`position:fixed;bottom:70px;right:${50+Math.random()*100}px;font-size:${28+Math.floor(Math.random()*16)}px;pointer-events:none;z-index:9999;animation:puppyPop 1.6s cubic-bezier(.4,0,.2,1) forwards`;
+  document.body.appendChild(el);
+  setTimeout(()=>el.remove(),1650);
+  for(let i=0;i<24;i++){
+    const c=document.createElement('div');
+    const x=Math.random()*window.innerWidth, y=window.innerHeight*.2+Math.random()*180;
+    const color=confettiColors[Math.floor(Math.random()*confettiColors.length)];
+    const size=5+Math.floor(Math.random()*8), delay=Math.random()*.3, dur=1+Math.random()*.5;
+    c.style.cssText=`position:fixed;left:${x}px;top:${y}px;width:${size}px;height:${size}px;border-radius:${['2px','50%','0'][Math.floor(Math.random()*3)]};background:${color};pointer-events:none;z-index:9998;animation:confettiFall ${dur}s ease-out ${delay}s forwards`;
+    document.body.appendChild(c);
+    setTimeout(()=>c.remove(),(dur+delay+.1)*1000);
+  }
+}
+
+// ── AVATAR ──
+document.getElementById('nameField').addEventListener('input',function(){
+  const v=this.value.trim();
+  const initials=v.split(' ').filter(Boolean).map(w=>w[0].toUpperCase()).join('').slice(0,2);
+  const av=document.getElementById('avatar');
+  av.textContent=initials||'?'; av.classList.toggle('active',!!v);
+});
+
+async function resetAll() {
+  if(!confirm('Weet je zeker dat je alle voortgang wil wissen?')) return;
+  try {
+    await supabase.from('overdracht_items').delete().neq('id','__none__');
+  } catch(e) { console.error(e); }
+  state={}; streak=0; xp=0;
+  document.getElementById('milestoneBanner').style.display='none';
+  renderSections(); updateUI();
+}
+
+// ── INIT ──
+buildTabs();
+renderSections();
+renderContacts();
+renderSpecs();
+renderVault();
+updateTabCounts();
+initSupabase();
+</script>
+</body>
+</html>
